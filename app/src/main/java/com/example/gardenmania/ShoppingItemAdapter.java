@@ -42,7 +42,7 @@ public class ShoppingItemAdapter extends RecyclerView.Adapter<ShoppingItemAdapte
         ShoppingItem currentItem = mShoppingItemData.get(position);
         holder.bindTo(currentItem);
         if(holder.getAdapterPosition() > lastPosition){
-            Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.slide_in_row);
+            Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.fade_in_row);
             holder.itemView.startAnimation(animation);
             lastPosition = holder.getAdapterPosition();
         }
@@ -105,6 +105,15 @@ public class ShoppingItemAdapter extends RecyclerView.Adapter<ShoppingItemAdapte
                 @Override
                 public void onClick(View view){
                     Log.d("Activity", "Add cart button clicked");
+                    ((SearchActivity)mContext).updateCartAlertIcon();
+                }
+            });
+
+            itemView.findViewById(R.id.add_to_favourite).setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View view){
+                    Log.d("Activity", "Add favourite button clicked");
+                    ((SearchActivity)mContext).addToFavourite(mTitleText.getText().toString());
                 }
             });
         }

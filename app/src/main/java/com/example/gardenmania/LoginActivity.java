@@ -73,4 +73,23 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
+
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putString("emailLogin", emailLogin.getText().toString());  // save your instance
+        savedInstanceState.putString("passwordLogin", passwordLogin.getText().toString());  // save your instance
+        Log.i(LOG_TAG, "onSaveInstanceState");
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        String email = savedInstanceState.getString("emailLogin"); //get it
+        String password = savedInstanceState.getString("passwordLogin"); //get it
+        Log.i(LOG_TAG, "onRestoreInstanceState");
+        emailLogin.setText(email);
+        passwordLogin.setText(password);
+    }
 }

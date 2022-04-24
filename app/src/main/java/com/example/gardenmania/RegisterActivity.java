@@ -82,4 +82,32 @@ public class RegisterActivity extends AppCompatActivity {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
+
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putString("usernameRegister", usernameRegister.getText().toString());  // save your instance
+        savedInstanceState.putString("passwordRegister", passwordRegister.getText().toString());  // save your instance
+        savedInstanceState.putString("passwordAgainRegister", passwordAgainRegister.getText().toString());  // save your instance
+        savedInstanceState.putString("phoneRegister", phoneRegister.getText().toString());  // save your instance
+        savedInstanceState.putString("emailRegister", emailRegister.getText().toString());  // save your instance
+        Log.i(LOG_TAG, "onSaveInstanceState");
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        String username = savedInstanceState.getString("usernameRegister"); //get it
+        String password = savedInstanceState.getString("passwordRegister"); //get it
+        String passwordAgain = savedInstanceState.getString("passwordAgainRegister"); //get it
+        String phone = savedInstanceState.getString("phoneRegister"); //get it
+        String email = savedInstanceState.getString("emailRegister"); //get it
+        Log.i(LOG_TAG, "onRestoreInstanceState");
+        usernameRegister.setText(username);
+        passwordRegister.setText(password);
+        passwordAgainRegister.setText(passwordAgain);
+        phoneRegister.setText(phone);
+        emailRegister.setText(email);
+    }
 }

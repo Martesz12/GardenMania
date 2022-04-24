@@ -39,20 +39,30 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/itemInfo"
+            android:layout_centerHorizontal="true"
             android:layout_marginBottom="0dp"
             android:padding="4dp"
-            android:textColor="@color/green"
             android:text="@string/item_prize_placeholder"
-            android:layout_centerHorizontal="true"
-            android:textSize="15dp"/>
+            android:textColor="@color/green"
+            android:textSize="15dp" />
 
         <Button
             android:id="@+id/add_to_cart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/itemPrice"
-            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="45dp"
             android:text="@string/kos_rba"
+            android:layout_marginBottom="30dp"/>
+
+        <Button
+            android:id="@+id/add_to_favourite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/add_to_cart"
+            android:layout_below="@id/itemPrice"
+            android:layout_marginLeft="60dp"
+            android:text="@string/kedvenc"
             android:layout_marginBottom="30dp"/>
 
 

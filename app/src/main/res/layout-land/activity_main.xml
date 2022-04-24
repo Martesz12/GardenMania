@@ -18,34 +18,36 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.15"/>
+        app:layout_constraintHorizontal_bias="0.1"/>
 
     <TextView
         android:id="@+id/welcomeDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Böngéssz a termékek között!"
+        android:text="Böngéssz a termékek\nközött!"
+        android:textAlignment="center"
         android:textColor="@color/green"
         android:textSize="25dp"
-        android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/welcomeText"
-        app:layout_constraintVertical_bias="0.2"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/welcomeText"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.15"
+        app:layout_constraintHorizontal_bias="0.5"/>
 
     <TextView
         android:id="@+id/welcomeLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Jelentkezz be, hogy a kosaradba vagy a kedvencek közé tud rakni a termékeket!\n\nRegisztrálj, ha nincs még fiókod!"
+        android:text="Jelentkezz be, hogy a kosaradba\nvagy a kedvencek közé tud rakni\na termékeket!\n\nRegisztrálj, ha nincs még fiókod!"
+        android:textAlignment="center"
         android:textColor="@color/green"
         android:textSize="25dp"
-        android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/welcomeText"
         app:layout_constraintTop_toBottomOf="@+id/welcomeDescription"
-        app:layout_constraintVertical_bias="0.15"/>
+        app:layout_constraintVertical_bias="0.4" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

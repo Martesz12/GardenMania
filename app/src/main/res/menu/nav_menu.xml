@@ -18,8 +18,7 @@
         android:id="@+id/favourite"
         android:title="@string/favourites"
         android:icon="@drawable/ic_favourite_foreground"
-        app:showAsAction="always"
-        app:actionLayout="@layout/favourite_item_number"/>
+        app:showAsAction="always" />
     <item
         android:id="@+id/login"
         android:title="@string/login"

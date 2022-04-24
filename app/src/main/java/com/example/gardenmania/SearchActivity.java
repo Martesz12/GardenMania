@@ -1,5 +1,8 @@
 package com.example.gardenmania;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.MenuItemCompat;
@@ -7,22 +10,28 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class SearchActivity extends AppCompatActivity {
     private static final String LOG_TAG = SearchActivity.class.getName();
+    private static final String PREF_KEY = MainActivity.class.getPackage().toString();
     // ------------- Firebase autentikáció -------------
     private FirebaseUser user;
     // ------------- Item kilistázós dolgok -------------
@@ -30,6 +39,13 @@ public class SearchActivity extends AppCompatActivity {
     private ArrayList<ShoppingItem> mItemList;
     private ShoppingItemAdapter mAdapter;
     private int gridNumber = 1;
+    // ------------- Menu kosár/kedvenc jelző -------------
+    private FrameLayout redCircleCart;
+    private TextView contentTextViewCart;
+    private int cartItems = 0;
+    // ------------- Kedvenc Set -------------
+    Set<String> favouriteSet;
+    private SharedPreferences preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +61,12 @@ public class SearchActivity extends AppCompatActivity {
         mAdapter = new ShoppingItemAdapter(this, mItemList);
         mRecycleView.setAdapter(mAdapter);
         initalizeData();
+        // ------------- Kedvenc Set -------------
+        favouriteSet = new HashSet<String>();
+        preferences = getSharedPreferences(PREF_KEY, MODE_PRIVATE);
+        if(preferences != null) {
+            favouriteSet = preferences.getStringSet("favouriteSet", null);
+        }
     }
 
 
@@ -71,23 +93,6 @@ public class SearchActivity extends AppCompatActivity {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.nav_menu, menu);
 
-        // -------- Bevásárlókocsi és kedvencek click megjavítása
-        MenuItem item = menu.findItem(R.id.cart);
-        item.getActionView().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onIconClick(1);
-            }
-        });
-
-        item = menu.findItem(R.id.favourite);
-        item.getActionView().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onIconClick(2);
-            }
-        });
-
         // -------- Keresősáv --------
         SearchView searchView = findViewById(R.id.search_bar);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -106,18 +111,6 @@ public class SearchActivity extends AppCompatActivity {
         return true;
     }
 
-    // -------- Bevásárlókocsi és Kedvencek navigáció --------
-    public void onIconClick(int i){
-        Intent intent;
-        if(i == 1){
-            intent = new Intent(this, CartActivity.class);
-        }
-        else{
-            intent = new Intent(this, FavouriteActivity.class);
-        }
-        startActivity(intent);
-    }
-
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         Intent intent;
@@ -126,13 +119,18 @@ public class SearchActivity extends AppCompatActivity {
                 intent = new Intent(this, LoginActivity.class);
                 startActivity(intent);
                 return true;
-//            case R.id.search:
-//                intent = new Intent(this, SearchActivity.class);
-//                startActivity(intent);
-//                return true;
             case R.id.cart:
-                intent = new Intent(this, CartActivity.class);
-                startActivity(intent);
+                if(user != null){
+                    if(cartItems > 0){
+                        cartItems = 0;
+                        redCircleCart.setVisibility(GONE);
+                        Toast.makeText(SearchActivity.this,"Rendelésed leadtad!\nA kosár tartalma kiürült!", Toast.LENGTH_LONG).show();
+                    }else{
+                        Toast.makeText(SearchActivity.this,"Nincs még termék a kosaradban!", Toast.LENGTH_LONG).show();
+                    }
+                }else{
+                    Toast.makeText(SearchActivity.this,"Jelentkezz be a funkció használatához!", Toast.LENGTH_LONG).show();
+                }
                 return true;
             case R.id.favourite:
                 intent = new Intent(this, FavouriteActivity.class);
@@ -165,6 +163,67 @@ public class SearchActivity extends AppCompatActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+        final MenuItem alertCartMenuItem = menu.findItem(R.id.cart);
+        FrameLayout rootViewCart = (FrameLayout) alertCartMenuItem.getActionView();
+
+        redCircleCart = (FrameLayout) rootViewCart.findViewById(R.id.view_alert_red_circle_cart);
+        contentTextViewCart = (TextView) rootViewCart.findViewById(R.id.view_alert_count_textview_cart);
+
+        rootViewCart.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                onOptionsItemSelected(alertCartMenuItem);
+            }
+        });
+
         return super.onPrepareOptionsMenu(menu);
+    }
+
+    public void updateCartAlertIcon(){
+        if(user != null){
+            cartItems = (cartItems + 1);
+            if(0 < cartItems){
+                contentTextViewCart.setText(String.valueOf(cartItems));
+            }else{
+                contentTextViewCart.setText("");
+            }
+            redCircleCart.setVisibility((cartItems > 0) ? VISIBLE : GONE);
+        }else{
+            Toast.makeText(SearchActivity.this,"Jelentkezz be a funkció használatához!", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putInt("cartItems", cartItems);  // save your instance
+        Log.i(LOG_TAG, "onSaveInstanceState");
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        int cart = savedInstanceState.getInt("cartItems"); //get it
+        Log.i(LOG_TAG, "onRestoreInstanceState");
+        cartItems = cart;
+    }
+
+    public void addToFavourite(String item){
+        if(user != null){
+            favouriteSet.add(item);
+            Toast.makeText(SearchActivity.this,"Hozzáadtad a kedvencekhez!", Toast.LENGTH_LONG).show();
+        }else{
+            Toast.makeText(SearchActivity.this,"Jelentkezz be a funkció használatához!", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    protected void onPause() {
+        super.onPause();
+
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putStringSet("favouriteSet", favouriteSet);
+        editor.apply();
+
+        Log.i(LOG_TAG, "onPause");
     }
 }

@@ -1,5 +1,7 @@
 package com.example.gardenmania;
 
+import static android.view.View.GONE;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -8,6 +10,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -17,6 +22,10 @@ public class ProfileActivity extends AppCompatActivity {
     private static final String LOG_TAG = ProfileActivity.class.getName();
     // ------------- Firebase autentikáció -------------
     private FirebaseUser user;
+    // ------------- Menu kosár/kedvenc jelző -------------
+    private FrameLayout redCircleCart;
+    private TextView contentTextViewCart;
+    private int cartItems = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +64,17 @@ public class ProfileActivity extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             case R.id.cart:
-                intent = new Intent(this, CartActivity.class);
-                startActivity(intent);
+                if(user != null){
+                    if(cartItems > 0){
+                        cartItems = 0;
+                        redCircleCart.setVisibility(GONE);
+                        Toast.makeText(ProfileActivity.this,"Rendelésed leadtad!\nA kosár tartalma kiürült!", Toast.LENGTH_LONG).show();
+                    }else{
+                        Toast.makeText(ProfileActivity.this,"Nincs még termék a kosaradban!", Toast.LENGTH_LONG).show();
+                    }
+                }else{
+                    Toast.makeText(ProfileActivity.this,"Jelentkezz be a funkció használatához!", Toast.LENGTH_LONG).show();
+                }
                 return true;
             case R.id.favourite:
                 intent = new Intent(this, FavouriteActivity.class);
@@ -66,14 +84,6 @@ public class ProfileActivity extends AppCompatActivity {
                 intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
                 return true;
-//            case R.id.profile:
-//                if(user != null){
-//                    intent = new Intent(this, ProfileActivity.class);
-//                    startActivity(intent);
-//                }else{
-//                    Toast.makeText(ProfileActivity.this,"Nem vagy bejelentkezve!", Toast.LENGTH_LONG).show();
-//                }
-//                return true;
             case R.id.logout:
                 if(user != null){
                     FirebaseAuth.getInstance().signOut();
@@ -92,4 +102,24 @@ public class ProfileActivity extends AppCompatActivity {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        final MenuItem alertCartMenuItem = menu.findItem(R.id.cart);
+        FrameLayout rootViewCart = (FrameLayout) alertCartMenuItem.getActionView();
+
+        redCircleCart = (FrameLayout) rootViewCart.findViewById(R.id.view_alert_red_circle_cart);
+        contentTextViewCart = (TextView) rootViewCart.findViewById(R.id.view_alert_count_textview_cart);
+
+        rootViewCart.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                onOptionsItemSelected(alertCartMenuItem);
+            }
+        });
+
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    //TODO elmenteni a cartItems számát és a betöltéskor megjeleníteni a számot
 }
