@@ -1,11 +1,13 @@
 package com.example.gardenmania;
 
 import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -22,6 +24,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
     private static final String LOG_TAG = MainActivity.class.getName();
+    private static final String PREF_KEY = MainActivity.class.getPackage().toString();
     // ------------- Firebase autentikáció -------------
     private FirebaseUser user;
     private TextView welcomeText;
@@ -31,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
     private FrameLayout redCircleCart;
     private TextView contentTextViewCart;
     private int cartItems = 0;
+
+    private SharedPreferences preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +50,11 @@ public class MainActivity extends AppCompatActivity {
         welcomeText.startAnimation(AnimationUtils.loadAnimation(this, R.anim.slide_in));
         welcomeDescription.startAnimation(AnimationUtils.loadAnimation(this, R.anim.slide_in));
         welcomeLogin.startAnimation(AnimationUtils.loadAnimation(this, R.anim.slide_in));
+
+        preferences = getSharedPreferences(PREF_KEY, MODE_PRIVATE);
+        if(preferences != null) {
+            cartItems = preferences.getInt("cartItems", 0);
+        }
     }
 
 
@@ -114,6 +124,8 @@ public class MainActivity extends AppCompatActivity {
         redCircleCart = (FrameLayout) rootViewCart.findViewById(R.id.view_alert_red_circle_cart);
         contentTextViewCart = (TextView) rootViewCart.findViewById(R.id.view_alert_count_textview_cart);
 
+        loadCartAlertIcon();
+
         rootViewCart.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
@@ -122,5 +134,26 @@ public class MainActivity extends AppCompatActivity {
         });
 
         return super.onPrepareOptionsMenu(menu);
+    }
+
+    public void loadCartAlertIcon(){
+        if(user != null){
+            if(0 < cartItems){
+                contentTextViewCart.setText(String.valueOf(cartItems));
+            }else{
+                contentTextViewCart.setText("");
+            }
+            redCircleCart.setVisibility((cartItems > 0) ? VISIBLE : GONE);
+        }
+    }
+
+    protected void onPause() {
+        super.onPause();
+
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt("cartItems", cartItems);
+        editor.apply();
+
+        Log.i(LOG_TAG, "onPause");
     }
 }

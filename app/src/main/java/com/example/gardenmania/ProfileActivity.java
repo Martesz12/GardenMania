@@ -1,11 +1,13 @@
 package com.example.gardenmania;
 
 import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -20,12 +22,15 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class ProfileActivity extends AppCompatActivity {
     private static final String LOG_TAG = ProfileActivity.class.getName();
+    private static final String PREF_KEY = MainActivity.class.getPackage().toString();
     // ------------- Firebase autentikáció -------------
     private FirebaseUser user;
     // ------------- Menu kosár/kedvenc jelző -------------
     private FrameLayout redCircleCart;
     private TextView contentTextViewCart;
     private int cartItems = 0;
+
+    private SharedPreferences preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +44,11 @@ public class ProfileActivity extends AppCompatActivity {
             Toast.makeText(ProfileActivity.this,"Jelentkezz be a funkció használatához!", Toast.LENGTH_LONG).show();
             Log.d(LOG_TAG, "Nem létező user!");
             finish();
+        }
+
+        preferences = getSharedPreferences(PREF_KEY, MODE_PRIVATE);
+        if(preferences != null) {
+            cartItems = preferences.getInt("cartItems", 0);
         }
     }
 
@@ -111,6 +121,8 @@ public class ProfileActivity extends AppCompatActivity {
         redCircleCart = (FrameLayout) rootViewCart.findViewById(R.id.view_alert_red_circle_cart);
         contentTextViewCart = (TextView) rootViewCart.findViewById(R.id.view_alert_count_textview_cart);
 
+        loadCartAlertIcon();
+
         rootViewCart.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
@@ -121,5 +133,24 @@ public class ProfileActivity extends AppCompatActivity {
         return super.onPrepareOptionsMenu(menu);
     }
 
-    //TODO elmenteni a cartItems számát és a betöltéskor megjeleníteni a számot
+    public void loadCartAlertIcon(){
+        if(user != null){
+            if(0 < cartItems){
+                contentTextViewCart.setText(String.valueOf(cartItems));
+            }else{
+                contentTextViewCart.setText("");
+            }
+            redCircleCart.setVisibility((cartItems > 0) ? VISIBLE : GONE);
+        }
+    }
+
+    protected void onPause() {
+        super.onPause();
+
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt("cartItems", cartItems);
+        editor.apply();
+
+        Log.i(LOG_TAG, "onPause");
+    }
 }
