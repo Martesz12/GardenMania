@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "148912759345",
+    "project_id": "gardenmania-f5835",
+    "storage_bucket": "gardenmania-f5835.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:148912759345:android:cd7be9948264ead6e3ab10",
+        "android_client_info": {
+          "package_name": "com.example.gardenmania"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "148912759345-ggdvfb1d08nsucan3l0ekgf0gr7lqboh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.gardenmania",
+            "certificate_hash": "eff8265dc7a9deac89f2e70a01b02d510382192c"
+          }
+        },
+        {
+          "client_id": "148912759345-pm8l93hflhv7rviabbcr69fidecm5nsc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCcfZS3g53sN3K1_AW1awFwq4GHNyUOgY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "148912759345-pm8l93hflhv7rviabbcr69fidecm5nsc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

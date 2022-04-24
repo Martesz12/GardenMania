@@ -1,0 +1,91 @@
+<resources>
+    <string name="app_name">GardenMania</string>
+    <string name="login">Bejelentkezés</string>
+    <string name="username">Felhasználónév</string>
+    <string name="password">Jelszó</string>
+    <string name="register_an_account">Regisztrálj\negy felhasználót</string>
+    <string name="register">Regisztráció</string>
+    <string name="search">Keresés</string>
+    <string name="shopping_cart">Bevásárló kocsi</string>
+    <string name="favourites">Kedvencek</string>
+    <string name="phone_number">Telefonszám</string>
+    <string name="password_again">Jelszó újra</string>
+    <string name="email">Email</string>
+    <string name="kijelentkez_s">Kijelentkezés</string>
+    <string name="kezd_lap">Kezdőlap</string>
+    <string name="profil">Profil</string>
+    <string name="m_gse">Mégse</string>
+    <string name="item_placeholder">item_placeholder</string>
+    <string name="item_info_placeholder">item_info_placeholder</string>
+    <string name="kos_rba">Kosárba</string>
+    <string name="item_prize_placeholder">item_prize_placeholder</string>
+
+    <string-array name="shopping_item_names">
+        <item>Acél ásólapát</item>
+        <item>Szőlőmetsző olló</item>
+        <item>Gereblye fanyéllel</item>
+        <item>AL-KO fűnyíró</item>
+        <item>Black + Decker láncfűrész</item>
+        <item>Black + Decker elektromos sövénynyíró</item>
+        <item>Tuja</item>
+        <item>Muskátli</item>
+        <item>Hegyeslevelű szivarfa</item>
+        <item>Piknik kerti asztal</item>
+        <item>Bali hintaágy</item>
+        <item>Pavilon</item>
+    </string-array>
+
+    <string-array name="shopping_item_infos">
+        <item>Nehéz, kemény talaj árkolásához, kiemeléséhez, lazításához és átültetéshez.</item>
+        <item>Erős és stabil metszőolló, tapadásmentes vágóél, vágási vastagság: max. 20 mm</item>
+        <item>Fanyéllel, kötelező eleme a kertnek, ergonómikus</item>
+        <item>Nagyteljesítményű négyütemű OHV benzinmotor, stabil acéllemezház, központi magasságállítás 7 fokozatban</item>
+        <item>Nagyon jó teljesítményű, slacsony visszacsapású lánc, automatikus lánckenés</item>
+        <item>Közepes méretű sövényekhez ideális, kés hossza: 55 cm, vágásvastagság: 22 mm,
+            fűrészlap csúcsa: plusz szerszám nélkül vastagabb, max. 35 mm-es átmérőjű ágakat vághat</item>
+        <item>Magasság: kb.: 60–80 cm, cserépméret: kb.: 19 cm, zöldes lombozat</item>
+        <item>Napos-félárnyékos helyet kedvel, futó, enyhe fagyoknak ellenáll</item>
+        <item>Szabad földbe való kiültetésre vagy dézsában való nevelésre alkalmas, nagy, egzotikus hatású lomb</item>
+        <item>Fából készült kerti piknikasztal két paddal négy személy számára, kültéri használatra alkalmas egész évben,
+            időjárásálló és tartós a kemencés nyomásos impregnálásnak köszönhetően</item>
+        <item>Párnázott huzat</item>
+        <item>Teraszra vagy kertbe, porszórt acélrudas váz, ablakkal ellátott oldalelemek</item>
+    </string-array>
+
+    <string-array name="shopping_item_prices">
+        <item>3 999 Ft</item>
+        <item>2 199 Ft</item>
+        <item>1 999 Ft</item>
+        <item>59 990 Ft</item>
+        <item>27 990 Ft</item>
+        <item>21 990 Ft</item>
+        <item>3 299 Ft</item>
+        <item>199 Ft</item>
+        <item>21 990 Ft</item>
+        <item>33 990 Ft</item>
+        <item>41 990 Ft</item>
+        <item>20 990 Ft</item>
+    </string-array>
+
+    <array name="shopping_item_images">
+        <item>@drawable/acel_lapat</item>
+        <item>@drawable/metszo_ollo</item>
+        <item>@drawable/gereblye</item>
+        <item>@drawable/funyiro</item>
+        <item>@drawable/lancfuresz</item>
+        <item>@drawable/sovenynyiro</item>
+        <item>@drawable/tuja</item>
+        <item>@drawable/muskatli</item>
+        <item>@drawable/szivarfa</item>
+        <item>@drawable/kerti_asztal</item>
+        <item>@drawable/hintaagy</item>
+        <item>@drawable/pavilon</item>
+    </array>
+
+    <string-array name="shopping_item_categories">
+        <item>Kerti szerszámok</item>
+        <item>Kerti gépek</item>
+        <item>Növények</item>
+        <item>Kerti bútorok</item>
+    </string-array>
+</resources>
