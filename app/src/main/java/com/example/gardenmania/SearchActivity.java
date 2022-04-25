@@ -22,8 +22,13 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -49,6 +54,9 @@ public class SearchActivity extends AppCompatActivity {
     private SharedPreferences preferences;
     // ------------- Notification -------------
     private NotificationHandler mNotificationHandler;
+    // ------------- Firestore -------------
+    private FirebaseFirestore mFirestone;
+    private CollectionReference mItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +71,11 @@ public class SearchActivity extends AppCompatActivity {
         mItemList = new ArrayList<>();
         mAdapter = new ShoppingItemAdapter(this, mItemList);
         mRecycleView.setAdapter(mAdapter);
-        initalizeData();
+        // ------------- Firestore -------------
+        mFirestone = FirebaseFirestore.getInstance();
+        mItems = mFirestone.collection("Items");
+        queryData();
+        // initalizeData();
         // ------------- Különböző activity adatok betöltése/mentése -------------
         favouriteSet = new HashSet<String>();
         preferences = getSharedPreferences(PREF_KEY, MODE_PRIVATE);
@@ -77,19 +89,36 @@ public class SearchActivity extends AppCompatActivity {
 
 
     // --------------- Item list feltöltése ---------------
+    private void queryData(){
+        mItemList.clear();
+
+        mItems.orderBy("name").limit(15).get().addOnSuccessListener(queryDocumentSnapshots -> {
+            for(QueryDocumentSnapshot document : queryDocumentSnapshots){
+                ShoppingItem item = document.toObject(ShoppingItem.class);
+                mItemList.add(item);
+            }
+            if(mItemList.size() == 0){
+                initalizeData();
+                queryData();
+            }
+            mAdapter.notifyDataSetChanged();
+        });
+    }
+
     private void initalizeData(){
         String[] itemsList = getResources().getStringArray(R.array.shopping_item_names);
         String[] itemsInfo = getResources().getStringArray(R.array.shopping_item_infos);
         String[] itemsPrice = getResources().getStringArray(R.array.shopping_item_prices);
         TypedArray itemsImageResource = getResources().obtainTypedArray(R.array.shopping_item_images);
 
-        mItemList.clear();
+        // mItemList.clear();
         for (int i = 0; i < itemsList.length; i++) {
-            mItemList.add(new ShoppingItem(itemsList[i], itemsInfo[i], itemsPrice[i], itemsImageResource.getResourceId(i,0)));
+            mItems.add(new ShoppingItem(itemsList[i], itemsInfo[i], itemsPrice[i], itemsImageResource.getResourceId(i,0)));
+            //mItemList.add(new ShoppingItem(itemsList[i], itemsInfo[i], itemsPrice[i], itemsImageResource.getResourceId(i,0)));
         }
 
         itemsImageResource.recycle();
-        mAdapter.notifyDataSetChanged();
+        // mAdapter.notifyDataSetChanged();
     }
 
 

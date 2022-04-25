@@ -14,35 +14,39 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class RegisterActivity extends AppCompatActivity {
     private static final String LOG_TAG = RegisterActivity.class.getName();
-
     // ------------- GUI elemek -------------
     EditText usernameRegister;
     EditText passwordRegister;
     EditText passwordAgainRegister;
     EditText phoneRegister;
     EditText emailRegister;
-
     // ------------- Firebase autentikáció -------------
     private FirebaseAuth mAuth;
+    // ------------- Firestore -------------
+    private FirebaseFirestore mFirestone;
+    private CollectionReference mUsers;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-
         // ------------- GUI elemek -------------
         usernameRegister = findViewById(R.id.usernameRegister);
         passwordRegister = findViewById(R.id.passwordRegister);
         passwordAgainRegister = findViewById(R.id.passwordAgainRegister);
         phoneRegister = findViewById(R.id.phoneRegister);
         emailRegister = findViewById(R.id.emailRegister);
-
         // ------------- Firebase autentikáció -------------
         mAuth = FirebaseAuth.getInstance();
+        // ------------- Firestore -------------
+        mFirestone = FirebaseFirestore.getInstance();
+        mUsers = mFirestone.collection("Users");
     }
 
     // -------------- Regisztrációs funkció lekezelése --------------
@@ -64,6 +68,7 @@ public class RegisterActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
                     Toast.makeText(RegisterActivity.this,"Sikeres regisztráció!", Toast.LENGTH_LONG).show();
+                    mUsers.add(new User(username, password, phone, email, null));
                     successfulRegister();
                 }else{
                     Log.d(LOG_TAG, "Sikertelen regisztráció!");

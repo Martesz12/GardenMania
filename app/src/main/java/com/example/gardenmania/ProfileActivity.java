@@ -30,12 +30,18 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.io.ByteArrayOutputStream;
 
 public class ProfileActivity extends AppCompatActivity {
     private static final String LOG_TAG = ProfileActivity.class.getName();
     private static final String PREF_KEY = MainActivity.class.getPackage().toString();
+    // --------------- Felirat ---------------
+    private TextView textViewProfile;
     // --------------- Profilkép készítéséhez szükséges kódok ---------------
     private static final int REQUEST_CODE_ASK_PERMISSION = 420;
     int tag = 1;
@@ -53,6 +59,10 @@ public class ProfileActivity extends AppCompatActivity {
     private SharedPreferences preferences;
     // ------------- Notification -------------
     private NotificationHandler mNotificationHandler;
+    // ------------- Firestore -------------
+    private FirebaseFirestore mFirestone;
+    private CollectionReference mUsers;
+    private User userData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,12 +85,32 @@ public class ProfileActivity extends AppCompatActivity {
         }
         // ------------- Notification -------------
         mNotificationHandler = new NotificationHandler(this);
+        // ------------- Firestore -------------
+        mFirestone = FirebaseFirestore.getInstance();
+        mUsers = mFirestone.collection("Users");
+        // ------------- Adatok beállítása -------------
+        textViewProfile = findViewById(R.id.textViewProfile);
+        queryData();
+
         // --------------- Profilkép készítéséhez szükséges kódok ---------------
         imageViewProfile = (ImageView)findViewById(R.id.imageViewProfile);
         if(!encoded.equals("")){
             byte[] imageAsBytes = Base64.decode(encoded.getBytes(), Base64.DEFAULT);
             imageViewProfile.setImageBitmap(BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length));
         }
+    }
+
+    // --------------- Megfelelő user adatainak betöltése ---------------
+    private void queryData(){
+        mUsers.get().addOnSuccessListener(queryDocumentSnapshots -> {
+            for(QueryDocumentSnapshot document : queryDocumentSnapshots){
+                User test = document.toObject(User.class);
+                if(test.getEmail().trim().equals(user.getEmail().trim())){
+                    userData = new User(test.getUsername(), test.getPassword(), test.getPhone(), test.getEmail(), test.getPicture());
+                    textViewProfile.setText(userData.getUsername() + " profilja");
+                }
+            }
+        });
     }
 
 
