@@ -20,6 +20,7 @@
     <string name="kos_rba">Kosárba</string>
     <string name="item_prize_placeholder">item_prize_placeholder</string>
     <string name="kedvenc">Kedvenc</string>
+    <string name="profilk_p_k_sz_t_se">Profilkép készítése</string>
 
     <string-array name="shopping_item_names">
         <item>Acél ásólapát</item>
