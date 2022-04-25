@@ -34,8 +34,10 @@ public class MainActivity extends AppCompatActivity {
     private FrameLayout redCircleCart;
     private TextView contentTextViewCart;
     private int cartItems = 0;
-
+    // ------------- Különböző activity adatok betöltése/mentése -------------
     private SharedPreferences preferences;
+    // ------------- Notification -------------
+    private NotificationHandler mNotificationHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,11 +52,13 @@ public class MainActivity extends AppCompatActivity {
         welcomeText.startAnimation(AnimationUtils.loadAnimation(this, R.anim.slide_in));
         welcomeDescription.startAnimation(AnimationUtils.loadAnimation(this, R.anim.slide_in));
         welcomeLogin.startAnimation(AnimationUtils.loadAnimation(this, R.anim.slide_in));
-
+        // ------------- Különböző activity adatok betöltése/mentése -------------
         preferences = getSharedPreferences(PREF_KEY, MODE_PRIVATE);
         if(preferences != null) {
             cartItems = preferences.getInt("cartItems", 0);
         }
+        // ------------- Notification -------------
+        mNotificationHandler = new NotificationHandler(this);
     }
 
 
@@ -73,17 +77,20 @@ public class MainActivity extends AppCompatActivity {
             case R.id.login:
                 intent = new Intent(this, LoginActivity.class);
                 startActivity(intent);
+                finish();
                 return true;
             case R.id.search:
                 intent = new Intent(this, SearchActivity.class);
                 startActivity(intent);
+                finish();
                 return true;
             case R.id.cart:
                 if(user != null){
                     if(cartItems > 0){
                         cartItems = 0;
                         redCircleCart.setVisibility(GONE);
-                        Toast.makeText(MainActivity.this,"Rendelésed leadtad!\nA kosár tartalma kiürült!", Toast.LENGTH_LONG).show();
+                        mNotificationHandler.send("Rendelésed leadtad! A kosár tartalma kiürült!");
+                        //Toast.makeText(MainActivity.this,"Rendelésed leadtad!\nA kosár tartalma kiürült!", Toast.LENGTH_LONG).show();
                     }else{
                         Toast.makeText(MainActivity.this,"Nincs még termék a kosaradban!", Toast.LENGTH_LONG).show();
                     }
@@ -94,11 +101,13 @@ public class MainActivity extends AppCompatActivity {
             case R.id.favourite:
                 intent = new Intent(this, FavouriteActivity.class);
                 startActivity(intent);
+                finish();
                 return true;
             case R.id.profile:
                 if(user != null){
                     intent = new Intent(this, ProfileActivity.class);
                     startActivity(intent);
+                    finish();
                 }else{
                     Toast.makeText(MainActivity.this,"Nem vagy bejelentkezve!", Toast.LENGTH_LONG).show();
                 }
@@ -107,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
                 if(user != null){
                     FirebaseAuth.getInstance().signOut();
                     Toast.makeText(MainActivity.this,"Sikeres kijelentkezés!", Toast.LENGTH_LONG).show();
+                    logout();
                 }else{
                     Toast.makeText(MainActivity.this,"Nem vagy bejelentkezve!", Toast.LENGTH_LONG).show();
                 }
@@ -114,6 +124,12 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void logout(){
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     @Override
@@ -136,6 +152,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onPrepareOptionsMenu(menu);
     }
 
+    // --------------- Kosár darabszám jelző ---------------
     public void loadCartAlertIcon(){
         if(user != null){
             if(0 < cartItems){
@@ -147,6 +164,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // --------------- Kosár dbszámának lementése ---------------
     protected void onPause() {
         super.onPause();
 

@@ -45,6 +45,7 @@ public class RegisterActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
     }
 
+    // -------------- Regisztrációs funkció lekezelése --------------
     public void register(View view){
         // ------------- Adatok lekérése, ellenőrzése -------------
         String username = usernameRegister.getText().toString();
@@ -76,14 +77,18 @@ public class RegisterActivity extends AppCompatActivity {
     private void successfulRegister(){
         Intent intent = new Intent(this, SearchActivity.class);
         startActivity(intent);
+        finish();
     }
 
+    // -------------- Vissza gomb funkciója --------------
     public void back(View view){
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
+        finish();
     }
 
 
+    // -------------- TextView adatainak lementése/visszaállítása --------------
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putString("usernameRegister", usernameRegister.getText().toString());  // save your instance

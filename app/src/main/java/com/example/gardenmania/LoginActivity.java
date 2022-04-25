@@ -29,17 +29,15 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
         // ------------- GUI elemek -------------
         emailLogin = findViewById(R.id.emailLogin);
         passwordLogin = findViewById(R.id.passwordLogin);
-
         // ------------- Firebase autentikáció -------------
         mAuth = FirebaseAuth.getInstance();
     }
 
 
-    // -------------- Gomb funkció kezelők --------------
+    // -------------- Bejelentkezés funkció lekezelése --------------
     public void login(View view){
         String email = emailLogin.getText().toString();
         String password = passwordLogin.getText().toString();
@@ -61,20 +59,25 @@ public class LoginActivity extends AppCompatActivity {
     private void successfulLogin(){
         Intent intent = new Intent(this, SearchActivity.class);
         startActivity(intent);
+        finish();
     }
 
 
+    // -------------- Regisztrációs gomb funkciója --------------
     public void register(View view){
         Intent intent = new Intent(this, RegisterActivity.class);
         startActivity(intent);
     }
 
+    // -------------- Vissza gomb funkciója --------------
     public void back(View view){
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
+        finish();
     }
 
 
+    // -------------- TextView adatainak lementése/visszaállítása --------------
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putString("emailLogin", emailLogin.getText().toString());  // save your instance

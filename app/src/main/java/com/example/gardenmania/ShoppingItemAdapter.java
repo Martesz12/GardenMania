@@ -101,6 +101,7 @@ public class ShoppingItemAdapter extends RecyclerView.Adapter<ShoppingItemAdapte
             mPriceText = itemView.findViewById(R.id.itemPrice);
             mItemImage = itemView.findViewById(R.id.itemImage);
 
+            // 'Kosárba' gomb funckiója
             itemView.findViewById(R.id.add_to_cart).setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick(View view){
@@ -109,6 +110,7 @@ public class ShoppingItemAdapter extends RecyclerView.Adapter<ShoppingItemAdapte
                 }
             });
 
+            // 'Kedvenc' gomb funkciója
             itemView.findViewById(R.id.add_to_favourite).setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick(View view){

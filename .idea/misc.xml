@@ -4,6 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/.Programming/AndroidProjects/GardenMania/app/src/main/res/drawable/circle.xml" value="0.2595" />
+        <entry key="..\:/.Programming/AndroidProjects/GardenMania/app/src/main/res/drawable/ic_icon_foreground.xml" value="0.2325" />
         <entry key="..\:/.Programming/AndroidProjects/GardenMania/app/src/main/res/layout-land/activity_login.xml" value="0.136" />
         <entry key="..\:/.Programming/AndroidProjects/GardenMania/app/src/main/res/layout-land/activity_main.xml" value="0.176" />
         <entry key="..\:/.Programming/AndroidProjects/GardenMania/app/src/main/res/layout-land/activity_register.xml" value="0.264" />

@@ -29,8 +29,10 @@ public class ProfileActivity extends AppCompatActivity {
     private FrameLayout redCircleCart;
     private TextView contentTextViewCart;
     private int cartItems = 0;
-
+    // ------------- Különböző activity adatok betöltése/mentése -------------
     private SharedPreferences preferences;
+    // ------------- Notification -------------
+    private NotificationHandler mNotificationHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,11 +47,13 @@ public class ProfileActivity extends AppCompatActivity {
             Log.d(LOG_TAG, "Nem létező user!");
             finish();
         }
-
+        // ------------- Különböző activity adatok betöltése/mentése -------------
         preferences = getSharedPreferences(PREF_KEY, MODE_PRIVATE);
         if(preferences != null) {
             cartItems = preferences.getInt("cartItems", 0);
         }
+        // ------------- Notification -------------
+        mNotificationHandler = new NotificationHandler(this);
     }
 
 
@@ -68,17 +72,20 @@ public class ProfileActivity extends AppCompatActivity {
             case R.id.login:
                 intent = new Intent(this, LoginActivity.class);
                 startActivity(intent);
+                finish();
                 return true;
             case R.id.search:
                 intent = new Intent(this, SearchActivity.class);
                 startActivity(intent);
+                finish();
                 return true;
             case R.id.cart:
                 if(user != null){
                     if(cartItems > 0){
                         cartItems = 0;
                         redCircleCart.setVisibility(GONE);
-                        Toast.makeText(ProfileActivity.this,"Rendelésed leadtad!\nA kosár tartalma kiürült!", Toast.LENGTH_LONG).show();
+                        mNotificationHandler.send("Rendelésed leadtad! A kosár tartalma kiürült!");
+                        //Toast.makeText(ProfileActivity.this,"Rendelésed leadtad!\nA kosár tartalma kiürült!", Toast.LENGTH_LONG).show();
                     }else{
                         Toast.makeText(ProfileActivity.this,"Nincs még termék a kosaradban!", Toast.LENGTH_LONG).show();
                     }
@@ -89,10 +96,12 @@ public class ProfileActivity extends AppCompatActivity {
             case R.id.favourite:
                 intent = new Intent(this, FavouriteActivity.class);
                 startActivity(intent);
+                finish();
                 return true;
             case R.id.home:
                 intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
+                finish();
                 return true;
             case R.id.logout:
                 if(user != null){
@@ -111,6 +120,7 @@ public class ProfileActivity extends AppCompatActivity {
     private void logout(){
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
+        finish();
     }
 
     @Override
@@ -133,6 +143,7 @@ public class ProfileActivity extends AppCompatActivity {
         return super.onPrepareOptionsMenu(menu);
     }
 
+    // --------------- Kosár darabszám jelző ---------------
     public void loadCartAlertIcon(){
         if(user != null){
             if(0 < cartItems){
@@ -144,6 +155,7 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
+    // --------------- Kosár dbszámának lementése ---------------
     protected void onPause() {
         super.onPause();
 

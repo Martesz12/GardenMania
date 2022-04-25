@@ -30,18 +30,20 @@ public class FavouriteActivity extends AppCompatActivity {
     private FirebaseUser user;
     // ------------- Kedvenc Set -------------
     Set<String> favouriteSet;
+    // ------------- Különböző activity adatok betöltése/mentése -------------
     private SharedPreferences preferences;
     TextView kedvencek_list;
     // ------------- Menu kosár/kedvenc jelző -------------
     private FrameLayout redCircleCart;
     private TextView contentTextViewCart;
     private int cartItems = 0;
+    // ------------- Notification -------------
+    private NotificationHandler mNotificationHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favourite);
-
         // ------------- Firebase autentikáció -------------
         user = FirebaseAuth.getInstance().getCurrentUser();
         if(user != null){
@@ -51,8 +53,7 @@ public class FavouriteActivity extends AppCompatActivity {
             Log.d(LOG_TAG, "Nem létező user!");
             finish();
         }
-
-        // ------------- Kedvenc Set -------------
+        // ------------- Különböző activity adatok betöltése/mentése -------------
         favouriteSet = new HashSet<String>();
         preferences = getSharedPreferences(PREF_KEY, MODE_PRIVATE);
         if(preferences != null) {
@@ -65,6 +66,8 @@ public class FavouriteActivity extends AppCompatActivity {
             lista = lista + item + "\n";
         }
         kedvencek_list.setText(lista);
+        // ------------- Notification -------------
+        mNotificationHandler = new NotificationHandler(this);
     }
 
 
@@ -83,17 +86,20 @@ public class FavouriteActivity extends AppCompatActivity {
             case R.id.login:
                 intent = new Intent(this, LoginActivity.class);
                 startActivity(intent);
+                finish();
                 return true;
             case R.id.search:
                 intent = new Intent(this, SearchActivity.class);
                 startActivity(intent);
+                finish();
                 return true;
             case R.id.cart:
                 if(user != null){
                     if(cartItems > 0){
                         cartItems = 0;
                         redCircleCart.setVisibility(GONE);
-                        Toast.makeText(FavouriteActivity.this,"Rendelésed leadtad!\nA kosár tartalma kiürült!", Toast.LENGTH_LONG).show();
+                        mNotificationHandler.send("Rendelésed leadtad! A kosár tartalma kiürült!");
+                        //Toast.makeText(FavouriteActivity.this,"Rendelésed leadtad!\nA kosár tartalma kiürült!", Toast.LENGTH_LONG).show();
                     }else{
                         Toast.makeText(FavouriteActivity.this,"Nincs még termék a kosaradban!", Toast.LENGTH_LONG).show();
                     }
@@ -104,11 +110,13 @@ public class FavouriteActivity extends AppCompatActivity {
             case R.id.home:
                 intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
+                finish();
                 return true;
             case R.id.profile:
                 if(user != null){
                     intent = new Intent(this, ProfileActivity.class);
                     startActivity(intent);
+                    finish();
                 }else{
                     Toast.makeText(FavouriteActivity.this,"Nem vagy bejelentkezve!", Toast.LENGTH_LONG).show();
                 }
@@ -130,6 +138,7 @@ public class FavouriteActivity extends AppCompatActivity {
     private void logout(){
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
+        finish();
     }
 
     @Override
@@ -152,6 +161,7 @@ public class FavouriteActivity extends AppCompatActivity {
         return super.onPrepareOptionsMenu(menu);
     }
 
+    // --------------- Kosár darabszám jelző ---------------
     public void loadCartAlertIcon(){
         if(user != null){
             if(0 < cartItems){
@@ -163,6 +173,7 @@ public class FavouriteActivity extends AppCompatActivity {
         }
     }
 
+    // --------------- Kosár dbszámának lementése ---------------
     protected void onPause() {
         super.onPause();
 

@@ -45,7 +45,10 @@ public class SearchActivity extends AppCompatActivity {
     private int cartItems = 0;
     // ------------- Kedvenc Set -------------
     Set<String> favouriteSet;
+    // ------------- Különböző activity adatok betöltése/mentése -------------
     private SharedPreferences preferences;
+    // ------------- Notification -------------
+    private NotificationHandler mNotificationHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,13 +64,15 @@ public class SearchActivity extends AppCompatActivity {
         mAdapter = new ShoppingItemAdapter(this, mItemList);
         mRecycleView.setAdapter(mAdapter);
         initalizeData();
-        // ------------- Kedvenc Set -------------
+        // ------------- Különböző activity adatok betöltése/mentése -------------
         favouriteSet = new HashSet<String>();
         preferences = getSharedPreferences(PREF_KEY, MODE_PRIVATE);
         if(preferences != null) {
             favouriteSet = preferences.getStringSet("favouriteSet", null);
             cartItems = preferences.getInt("cartItems", 0);
         }
+        // ------------- Notification -------------
+        mNotificationHandler = new NotificationHandler(this);
     }
 
 
@@ -119,13 +124,15 @@ public class SearchActivity extends AppCompatActivity {
             case R.id.login:
                 intent = new Intent(this, LoginActivity.class);
                 startActivity(intent);
+                finish();
                 return true;
             case R.id.cart:
                 if(user != null){
                     if(cartItems > 0){
                         cartItems = 0;
                         redCircleCart.setVisibility(GONE);
-                        Toast.makeText(SearchActivity.this,"Rendelésed leadtad!\nA kosár tartalma kiürült!", Toast.LENGTH_LONG).show();
+                        mNotificationHandler.send("Rendelésed leadtad! A kosár tartalma kiürült!");
+                        // Toast.makeText(SearchActivity.this,"Rendelésed leadtad!\nA kosár tartalma kiürült!", Toast.LENGTH_LONG).show();
                     }else{
                         Toast.makeText(SearchActivity.this,"Nincs még termék a kosaradban!", Toast.LENGTH_LONG).show();
                     }
@@ -136,15 +143,18 @@ public class SearchActivity extends AppCompatActivity {
             case R.id.favourite:
                 intent = new Intent(this, FavouriteActivity.class);
                 startActivity(intent);
+                finish();
                 return true;
             case R.id.home:
                 intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
+                finish();
                 return true;
             case R.id.profile:
                 if(user != null){
                     intent = new Intent(this, ProfileActivity.class);
                     startActivity(intent);
+                    finish();
                 }else{
                     Toast.makeText(SearchActivity.this,"Nem vagy bejelentkezve!", Toast.LENGTH_LONG).show();
                 }
@@ -153,6 +163,7 @@ public class SearchActivity extends AppCompatActivity {
                 if(user != null){
                     FirebaseAuth.getInstance().signOut();
                     Toast.makeText(SearchActivity.this,"Sikeres kijelentkezés!", Toast.LENGTH_LONG).show();
+                    logout();
                 }else{
                     Toast.makeText(SearchActivity.this,"Nem vagy bejelentkezve!", Toast.LENGTH_LONG).show();
                 }
@@ -160,6 +171,12 @@ public class SearchActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void logout(){
+        Intent intent = new Intent(this, SearchActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     @Override
@@ -182,6 +199,8 @@ public class SearchActivity extends AppCompatActivity {
         return super.onPrepareOptionsMenu(menu);
     }
 
+
+    // --------------- Kosár darabszám jelző ---------------
     public void loadCartAlertIcon(){
         if(user != null){
             if(0 < cartItems){
@@ -207,6 +226,7 @@ public class SearchActivity extends AppCompatActivity {
         }
     }
 
+    // -------------- Kosár dbszámának lementése/visszaállítása --------------
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putInt("cartItems", cartItems);  // save your instance
@@ -222,6 +242,7 @@ public class SearchActivity extends AppCompatActivity {
         cartItems = cart;
     }
 
+    // --------------- Kedvencek hozzáadása egy Set-hez ---------------
     public void addToFavourite(String item){
         if(user != null){
             favouriteSet.add(item);
@@ -231,6 +252,7 @@ public class SearchActivity extends AppCompatActivity {
         }
     }
 
+    // --------------- Kosár dbszámának lementése ---------------
     protected void onPause() {
         super.onPause();
 
