@@ -81,7 +81,6 @@ public class ProfileActivity extends AppCompatActivity {
         preferences = getSharedPreferences(PREF_KEY, MODE_PRIVATE);
         if(preferences != null) {
             cartItems = preferences.getInt("cartItems", 0);
-            encoded = preferences.getString("profilePicture", "");
         }
         // ------------- Notification -------------
         mNotificationHandler = new NotificationHandler(this);
@@ -94,11 +93,8 @@ public class ProfileActivity extends AppCompatActivity {
 
         // --------------- Profilkép készítéséhez szükséges kódok ---------------
         imageViewProfile = (ImageView)findViewById(R.id.imageViewProfile);
-        if(!encoded.equals("")){
-            byte[] imageAsBytes = Base64.decode(encoded.getBytes(), Base64.DEFAULT);
-            imageViewProfile.setImageBitmap(BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length));
-        }
     }
+
 
     // --------------- Megfelelő user adatainak betöltése ---------------
     private void queryData(){
@@ -107,7 +103,12 @@ public class ProfileActivity extends AppCompatActivity {
                 User test = document.toObject(User.class);
                 if(test.getEmail().trim().equals(user.getEmail().trim())){
                     userData = new User(test.getUsername(), test.getPassword(), test.getPhone(), test.getEmail(), test.getPicture());
+                    userData.setId(document.getId());
                     textViewProfile.setText(userData.getUsername() + " profilja");
+                    if(userData.getPicture() != null){
+                        byte[] imageAsBytes = Base64.decode(userData.getPicture().getBytes(), Base64.DEFAULT);
+                        imageViewProfile.setImageBitmap(BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length));
+        }
                 }
             }
         });
@@ -217,15 +218,7 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
 
-        if(imgProfile != null){
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            imgProfile.compress(Bitmap.CompressFormat.PNG, 100, baos); //bm is the bitmap object
-            byte[] b = baos.toByteArray();
-            encoded = Base64.encodeToString(b, Base64.DEFAULT);
-        }
-
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("profilePicture", encoded);
         editor.putInt("cartItems", cartItems);
         editor.apply();
 
@@ -254,6 +247,7 @@ public class ProfileActivity extends AppCompatActivity {
         startActivityForResult(intent, tag);
     }
 
+    // --------- Engedély a kép készítéséhez ---------
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode){
@@ -269,6 +263,7 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
+    // --------- Elkészített kép betöltése ---------
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -277,7 +272,32 @@ public class ProfileActivity extends AppCompatActivity {
             pictureBundle = data.getExtras();
             imgProfile = (Bitmap) pictureBundle.get("data");
             imageViewProfile.setImageBitmap(imgProfile);
+
+            // --------- kép lementése firebase-ra ---------
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            imgProfile.compress(Bitmap.CompressFormat.PNG, 100, baos); //bm is the bitmap object
+            byte[] b = baos.toByteArray();
+            encoded = Base64.encodeToString(b, Base64.DEFAULT);
+            mUsers.document(userData._getId()).update("picture", encoded)
+                    .addOnFailureListener(failure -> {
+                        Toast.makeText(ProfileActivity.this,"Nem lehet elmenetni a képet!", Toast.LENGTH_LONG).show();
+                    });
         }
+    }
+
+
+    // --------- Profil törlése gomb lekezelése ---------
+    public void deleteProfile(View view){
+        DocumentReference ref = mUsers.document(userData._getId()); //kell hozzá egy ID
+        ref.delete()
+                .addOnSuccessListener(success -> {
+                    FirebaseAuth.getInstance().signOut();
+                    Toast.makeText(ProfileActivity.this,"Sikerült a profil törlése!", Toast.LENGTH_LONG).show();
+                    logout();
+                })
+                .addOnFailureListener(fail -> {
+                    Toast.makeText(this, "Nem sikerült a profil törlése", Toast.LENGTH_LONG).show();
+                });
     }
 
 }

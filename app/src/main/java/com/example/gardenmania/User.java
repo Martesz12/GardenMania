@@ -6,6 +6,7 @@ public class User {
     private String phone;
     private String email;
     private String picture;
+    private String id;
 
     public User(String username, String password, String phone, String email, String picture) {
         this.username = username;
@@ -35,5 +36,13 @@ public class User {
 
     public String getPicture() {
         return picture;
+    }
+
+    public String _getId(){
+        return id;
+    }
+
+    public void setId(String id){
+        this.id = id;
     }
 }
