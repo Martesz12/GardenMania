@@ -101,7 +101,6 @@ public class MainActivity extends AppCompatActivity {
             case R.id.favourite:
                 intent = new Intent(this, FavouriteActivity.class);
                 startActivity(intent);
-                finish();
                 return true;
             case R.id.profile:
                 if(user != null){
