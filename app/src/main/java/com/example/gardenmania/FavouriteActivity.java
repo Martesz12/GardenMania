@@ -57,7 +57,7 @@ public class FavouriteActivity extends AppCompatActivity {
         favouriteSet = new HashSet<String>();
         preferences = getSharedPreferences(PREF_KEY, MODE_PRIVATE);
         if(preferences != null) {
-            favouriteSet = preferences.getStringSet("favouriteSet", null);
+            favouriteSet = preferences.getStringSet("favouriteSet", new HashSet<String>());
             cartItems = preferences.getInt("cartItems", 0);
         }
         kedvencek_list = findViewById(R.id.kedvencek_list);

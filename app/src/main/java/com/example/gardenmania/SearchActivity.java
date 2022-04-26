@@ -80,7 +80,7 @@ public class SearchActivity extends AppCompatActivity {
         favouriteSet = new HashSet<String>();
         preferences = getSharedPreferences(PREF_KEY, MODE_PRIVATE);
         if(preferences != null) {
-            favouriteSet = preferences.getStringSet("favouriteSet", null);
+            favouriteSet = preferences.getStringSet("favouriteSet", new HashSet<String>());
             cartItems = preferences.getInt("cartItems", 0);
         }
         // ------------- Notification -------------
@@ -91,6 +91,7 @@ public class SearchActivity extends AppCompatActivity {
     // --------------- Item list feltöltése ---------------
     private void queryData(){
         mItemList.clear();
+        TypedArray itemsImageResource = getResources().obtainTypedArray(R.array.shopping_item_images);
 
         mItems.orderBy("name").limit(15).get().addOnSuccessListener(queryDocumentSnapshots -> {
             for(QueryDocumentSnapshot document : queryDocumentSnapshots){
@@ -98,6 +99,7 @@ public class SearchActivity extends AppCompatActivity {
                 mItemList.add(item);
             }
             if(mItemList.size() == 0){
+                Log.i(LOG_TAG, "Volt 0 a cucc");
                 initalizeData();
                 queryData();
             }
