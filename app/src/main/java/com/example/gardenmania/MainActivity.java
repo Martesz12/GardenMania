@@ -67,6 +67,20 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.nav_menu, menu);
+        MenuItem item;
+        if(user != null){
+            item = menu.findItem(R.id.login);
+            item.setVisible(false);
+        }else{
+            item = menu.findItem(R.id.cart);
+            item.setVisible(false);
+            item = menu.findItem(R.id.favourite);
+            item.setVisible(false);
+            item = menu.findItem(R.id.profile);
+            item.setVisible(false);
+            item = menu.findItem(R.id.logout);
+            item.setVisible(false);
+        }
         return true;
     }
 
@@ -115,6 +129,10 @@ public class MainActivity extends AppCompatActivity {
                 if(user != null){
                     FirebaseAuth.getInstance().signOut();
                     Toast.makeText(MainActivity.this,"Sikeres kijelentkezés!", Toast.LENGTH_LONG).show();
+                    cartItems = 0;
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putStringSet("favouriteSet", null);
+                    editor.apply();
                     logout();
                 }else{
                     Toast.makeText(MainActivity.this,"Nem vagy bejelentkezve!", Toast.LENGTH_LONG).show();

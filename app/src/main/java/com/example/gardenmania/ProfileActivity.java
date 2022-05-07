@@ -28,6 +28,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -120,6 +122,20 @@ public class ProfileActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.nav_menu, menu);
+        MenuItem item;
+        if(user != null){
+            item = menu.findItem(R.id.login);
+            item.setVisible(false);
+        }else{
+            item = menu.findItem(R.id.cart);
+            item.setVisible(false);
+            item = menu.findItem(R.id.favourite);
+            item.setVisible(false);
+            item = menu.findItem(R.id.profile);
+            item.setVisible(false);
+            item = menu.findItem(R.id.logout);
+            item.setVisible(false);
+        }
         return true;
     }
 
@@ -165,6 +181,10 @@ public class ProfileActivity extends AppCompatActivity {
                 if(user != null){
                     FirebaseAuth.getInstance().signOut();
                     Toast.makeText(ProfileActivity.this,"Sikeres kijelentkezés!", Toast.LENGTH_LONG).show();
+                    cartItems = 0;
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putStringSet("favouriteSet", null);
+                    editor.apply();
                     logout();
                 }else{
                     Toast.makeText(ProfileActivity.this,"Nem vagy bejelentkezve!", Toast.LENGTH_LONG).show();
@@ -291,9 +311,22 @@ public class ProfileActivity extends AppCompatActivity {
         DocumentReference ref = mUsers.document(userData._getId()); //kell hozzá egy ID
         ref.delete()
                 .addOnSuccessListener(success -> {
-                    FirebaseAuth.getInstance().signOut();
-                    Toast.makeText(ProfileActivity.this,"Sikerült a profil törlése!", Toast.LENGTH_LONG).show();
-                    logout();
+                    user.delete()
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        FirebaseAuth.getInstance().signOut();
+                                        Toast.makeText(ProfileActivity.this,"Sikerült a profil törlése!", Toast.LENGTH_LONG).show();
+                                        cartItems = 0;
+                                        SharedPreferences.Editor editor = preferences.edit();
+                                        editor.putStringSet("favouriteSet", null);
+                                        editor.apply();
+                                        logout();
+                                        Log.d(LOG_TAG, "User account deleted.");
+                                    }
+                                }
+                            });
                 })
                 .addOnFailureListener(fail -> {
                     Toast.makeText(this, "Nem sikerült a profil törlése", Toast.LENGTH_LONG).show();

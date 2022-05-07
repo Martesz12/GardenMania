@@ -129,6 +129,20 @@ public class SearchActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.nav_menu, menu);
+        MenuItem item;
+        if(user != null){
+            item = menu.findItem(R.id.login);
+            item.setVisible(false);
+        }else{
+            item = menu.findItem(R.id.cart);
+            item.setVisible(false);
+            item = menu.findItem(R.id.favourite);
+            item.setVisible(false);
+            item = menu.findItem(R.id.profile);
+            item.setVisible(false);
+            item = menu.findItem(R.id.logout);
+            item.setVisible(false);
+        }
 
         // -------- Keresősáv --------
         SearchView searchView = findViewById(R.id.search_bar);
@@ -193,6 +207,8 @@ public class SearchActivity extends AppCompatActivity {
                 if(user != null){
                     FirebaseAuth.getInstance().signOut();
                     Toast.makeText(SearchActivity.this,"Sikeres kijelentkezés!", Toast.LENGTH_LONG).show();
+                    favouriteSet = null;
+                    cartItems = 0;
                     logout();
                 }else{
                     Toast.makeText(SearchActivity.this,"Nem vagy bejelentkezve!", Toast.LENGTH_LONG).show();
