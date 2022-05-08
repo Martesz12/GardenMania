@@ -45,6 +45,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         // ------------- Firebase autentikáció -------------
         user = FirebaseAuth.getInstance().getCurrentUser();
+        if(user != null){
+            Log.i(LOG_TAG, String.valueOf(user.getEmail()));
+        }
         // ------------- Text-ek animálása -------------
         welcomeText = findViewById(R.id.welcomeText);
         welcomeDescription = findViewById(R.id.welcomeDescription);
