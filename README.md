@@ -3,6 +3,7 @@
 Szeretnék egy kis segítséget adni a pontozáshoz, leírtam, hogy melyik pontot nagyjából hol valósítottam meg :)
 
 ###### Bármi probléma esetén keress fel nyugodtan (Bene Martin, DU0038, Büne#6780)
+###### Az app/build/outputs/apk/debug mappában ott a .apk fájl, nem tudom mire kell, de ott van
 
 ## Fordítási és futtatási hiba nincs
   * nekem nem volt
