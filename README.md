@@ -2,6 +2,8 @@
 
 Szeretnék egy kis segítséget adni a pontozáshoz, leírtam, hogy melyik pontot nagyjából hol valósítottam meg :)
 
+###### Bármi probléma esetén keress fel nyugodtan (Bene Martin, DU0038, Büne#6780)
+
 ## Fordítási és futtatási hiba nincs
   * nekem nem volt
 
